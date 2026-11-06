@@ -122,7 +122,7 @@
             text-align: center;
             font-size: 22px;
             color: #555;
-            margin-bottom: 24px;
+            margin-bottom: 36px;
         }
         .control-bar {
             display: flex;
@@ -336,14 +336,14 @@
         <div class="wrap">
             <div class="card-container" id="cardBox">
                 <div class="item-card" id="sightCard">
-                    <img id="sightImg" src="images/westlake.jfif" alt="sight">
+                    <img id="sightImg" src="westlake.jfif" alt="sight">
                     <div class="card-text">
                         <h3 id="sightTitle"></h3>
                         <p id="sightDesc"></p>
                     </div>
                 </div>
                 <div class="item-card" id="foodCard">
-                    <img id="foodImg" src="images/dongporou.jfif" alt="food">
+                    <img id="foodImg" src="dongporou.jfif" alt="food">
                     <div class="card-text">
                         <h3 id="foodTitle"></h3>
                         <p id="foodDesc"></p>
@@ -365,12 +365,12 @@
         const data = {
             hangzhou: {
                 sight: {
-                    img: "images/westlake.jfif",
+                    img: "westlake.jfif",
                     title: "West Lake",
                     desc: "West Lake in Hangzhou, with shimmering water and misty scenery, is a landmark landscape in the Jiangnan region."
                 },
                 food: {
-                    img: "images/dongporou.jfif",
+                    img: "dongporou.jfif",
                     title: "Dongpo Pork",
                     desc: "Glossy red, tender and fatty but not greasy, it is a classic dish of Hangzhou."
                 },
@@ -379,12 +379,12 @@
             },
             chengdu: {
                 sight: {
-                    img: "images/panda.jfif",
+                    img: "panda.jfif",
                     title: "Giant Panda Base",
-                    desc: "Get close to lovely giant pandas. It is a must-visit spot in Chengdu."
+                    desc: "Get close to lovely giant pandas. It is a must‑visit spot in Chengdu."
                 },
                 food: {
-                    img: "images/chengdupot.jfif",
+                    img: "chengdupot.jfif",
                     title: "Chengdu Hot Pot",
                     desc: "Spicy, fragrant and steaming hot, the most famous local food in Chengdu."
                 },
@@ -393,12 +393,12 @@
             },
             xian: {
                 sight: {
-                    img: "images/bingmayong.jfif",
+                    img: "bingmayong.jfif",
                     title: "Terracotta Army",
                     desc: "A world wonder. Thousands of warriors witness the glory of ancient Qin Dynasty."
                 },
                 food: {
-                    img: "images/roujiamo.jfif",
+                    img: "roujiamo.jfif",
                     title: "Roujiamo",
                     desc: "Crispy crust with juicy meat filling, the signature snack of Xi'an."
                 },
@@ -407,12 +407,12 @@
             },
             chongqing: {
                 sight: {
-                    img: "images/chongqing.jfif",
+                    img: "chongqing.jfif",
                     title: "Hongyadong",
-                    desc: "Built along steep cliffs, this layered stilt-house complex glows beautifully at night."
+                    desc: "Built along steep cliffs, this layered stilt‑house complex glows beautifully at night."
                 },
                 food: {
-                    img: "images/chongqingpot.jfif",
+                    img: "chongqingpot.jfif",
                     title: "Chongqing Hotpot",
                     desc: "Fiery and rich broth loaded with chili and Sichuan peppercorns, the soul of Chongqing."
                 },
@@ -421,12 +421,12 @@
             },
             xiamen: {
                 sight: {
-                    img: "images/xiamen.jfif",
+                    img: "xiamen.jfif",
                     title: "Gulangyu Island",
-                    desc: "A quiet car-free island with old colonial villas, beaches and gentle sea wind."
+                    desc: "A quiet car‑free island with old colonial villas, beaches and gentle sea wind."
                 },
                 food: {
-                    img: "images/shaxian.jfif",
+                    img: "shaxian.jfif",
                     title: "Shaxian Noodles",
                     desc: "Light, fresh and comforting local noodle dish loved by residents in Fujian."
                 },
@@ -435,12 +435,12 @@
             },
             suzhou: {
                 sight: {
-                    img: "images/suzhou.jfif",
+                    img: "suzhou.jfif",
                     title: "Classical Suzhou Garden",
                     desc: "Masterpiece of Chinese landscape design, blending rocks, water, pavilions and plants."
                 },
                 food: {
-                    img: "images/suzhoucake.jfif",
+                    img: "suzhoucake.jfif",
                     title: "Suzhou Pastry",
                     desc: "Soft, sweet and delicate traditional pastry representing Suzhou’s gentle taste."
                 },
@@ -450,7 +450,6 @@
         };
         const cityNames = Object.keys(data);
 
-        // Audio ping
         function playPing() {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const osc = ctx.createOscillator();
@@ -465,14 +464,12 @@
             osc.stop(ctx.currentTime + 0.22);
         }
 
-        // Mouse glow
         const cursorLight = document.getElementById("cursorLight");
         document.addEventListener("mousemove", e => {
             cursorLight.style.left = e.clientX + "px";
             cursorLight.style.top = e.clientY + "px";
         });
 
-        // Splash auto countdown
         const splash = document.getElementById("splash");
         const startBtn = document.getElementById("startBtn");
         const progressBar = document.getElementById("progressBar");
@@ -493,7 +490,6 @@
             splash.classList.add("hidden");
         };
 
-        // Bubble spawn
         function spawnBubble() {
             const b = document.createElement("div");
             b.className = "bubble";
@@ -507,7 +503,6 @@
         }
         setInterval(spawnBubble, 1200);
 
-        // Tilt effect for cards
         function attachTilt(card) {
             card.onmousemove = e => {
                 const rect = card.getBoundingClientRect();
@@ -522,7 +517,6 @@
             };
         }
 
-        // Typing effect
         function typeText(el, text, speed = 50) {
             el.innerText = "";
             let i = 0;
@@ -535,7 +529,6 @@
             }, speed);
         }
 
-        // Confetti
         function popConfetti() {
             for (let i = 0; i < 36; i++) {
                 const piece = document.createElement("div");
@@ -562,7 +555,6 @@
             }
         }
 
-        // Fact modal
         const overlay = document.getElementById("overlay");
         const factModal = document.getElementById("factModal");
         const factTitle = document.getElementById("factTitle");
@@ -581,7 +573,6 @@
         closeFact.onclick = closeFactBox;
         overlay.onclick = closeFactBox;
 
-        // Elements
         const citySelect = document.getElementById("citySelect");
         const sightImg = document.getElementById("sightImg");
         const sightTitle = document.getElementById("sightTitle");
@@ -599,8 +590,8 @@
         sightCard.onclick = () => openFact(cityBadge.innerText, data[citySelect.value].fact);
         foodCard.onclick = () => openFact(cityBadge.innerText, data[citySelect.value].fact);
 
-        sightImg.onerror = () => sightImg.src = "images/westlake.jfif";
-        foodImg.onerror = () => foodImg.src = "images/westlake.jfif";
+        sightImg.onerror = () => sightImg.src = "westlake.jfif";
+        foodImg.onerror = () => foodImg.src = "westlake.jfif";
 
         function render(cityKey) {
             cardBox.classList.add("fade-out");
