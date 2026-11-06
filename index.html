@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美食城市打卡</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+        body {
+            background-color: #fff8ee;
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+            color: #c84a31;
+            margin-bottom: 40px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+        .card {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+        }
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .card-text {
+            padding: 16px;
+        }
+        .card-text h3 {
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .card-text p {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>中国城市 & 特色美食</h1>
+    <div class="container">
+        <div class="card">
+            <img src="images/westlake.jfif" alt="西湖">
+            <div class="card-text">
+                <h3>杭州 · 西湖</h3>
+                <p>江南水乡，风景如画</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="images/dongporou.jfif" alt="东坡肉">
+            <div class="card-text">
+                <h3>杭州 · 东坡肉</h3>
+                <p>肥而不腻，经典杭帮菜</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="images/bingmayong.jfif" alt="兵马俑">
+            <div class="card-text">
+                <h3>西安 · 兵马俑</h3>
+                <p>世界八大奇迹之一</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="images/roujiamo.jfif" alt="肉夹馍">
+            <div class="card-text">
+                <h3>西安 · 肉夹馍</h3>
+                <p>外皮酥脆，肉馅香浓</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="images/panda.jfif" alt="熊猫">
+            <div class="card-text">
+                <h3>成都 · 大熊猫</h3>
+                <p>国宝的故乡</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="images/chengdupot.jfif" alt="成都火锅">
+            <div class="card-text">
+                <h3>成都 · 火锅</h3>
+                <p>麻辣鲜香，热闹过瘾</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="images/chongqing.jfif" alt="洪崖洞">
+            <div class="card-text">
+                <h3>重庆 · 洪崖洞</h3>
+                <p>魔幻山城夜景</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="images/chongqingpot.jfif" alt="重庆火锅">
+            <div class="card-text">
+                <h3>重庆 · 老火锅</h3>
+                <p>牛油醇厚，辣味十足</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="images/xiamen.jfif" alt="厦门">
+            <div class="card-text">
+                <h3>厦门 · 鼓浪屿</h3>
+                <p>海风与文艺小岛</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="images/shaxian.jfif" alt="沙县小吃">
+            <div class="card-text">
+                <h3>沙县小吃</h3>
+                <p>遍布全国的福建风味</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="images/suzhou.jfif" alt="苏州园林">
+            <div class="card-text">
+                <h3>苏州 · 园林</h3>
+                <p>一步一景，古典雅致</p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="images/suzhoucake.jfif" alt="苏式点心">
+            <div class="card-text">
+                <h3>苏州 · 苏式点心</h3>
+                <p>甜而不腻，精巧好看</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
