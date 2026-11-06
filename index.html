@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food & Travel Check-in</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #fff8ec;
+            padding: 0;
+            overflow-x: hidden;
+            transition: background-color 0.6s ease;
+            perspective: 1200px;
+        }
+        .cursor-light {
+            position: fixed;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,180,100,0.20), transparent 72%);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+        .bubble {
+            position: fixed;
+            border-radius: 50%;
+            background: rgba(255, 210, 160, 0.25);
+            pointer-events: none;
+            z-index: 0;
+            animation: floatBubble linear forwards;
+        }
+        @keyframes floatBubble {
+            0% {
+                transform: translateY(100vh) scale(0.6);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-120px) scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        /* Splash welcome */
+        .splash {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #fff1dc, #ffe8cc);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            transition: opacity 0.7s ease, visibility 0.7s ease;
+        }
+        .splash.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .splash h1 {
+            font-size: 56px;
+            color: #c83c23;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .splash p {
+            font-size: 22px;
+            color: #555;
+            margin-bottom: 24px;
+            text-align: center;
+            padding: 0 20px;
+        }
+        .splash-progress {
+            width: 320px;
+            height: 8px;
+            background: #ffd6a5;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+        .splash-progress > div {
+            height: 100%;
+            width: 0%;
+            background: #c83c23;
+            transition: width 0.1s linear;
+        }
+        #startBtn {
+            font-size: 24px;
+            padding: 14px 36px;
+            border: none;
+            border-radius: 999px;
+            background-color: #c83c23;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #startBtn:hover {
+            background-color: #a82f1b;
+            transform: scale(1.05);
+        }
+
+        /* Main page */
+        .main-page {
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+        h1 {
+            text-align: center;
+            font-size: 48px;
+            color: #c83c23;
+            margin-bottom: 12px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 22px;
+            color: #555;
+            margin-bottom: 24px;
+        }
+        .control-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 36px;
+        }
+        .city-badge {
+            background: #ffd6a5;
+            color: #c83c23;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-weight: bold;
+        }
+        #randomBtn {
+            font-size: 20px;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 999px;
+            background: #ff9b54;
+            color: white;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        #randomBtn:hover {
+            background: #e6803c;
+            transform: scale(1.05);
+        }
+        #randomBtn:active {
+            animation: shake 0.25s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+        .wrap {
+            background: #ffffff;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 48px 32px;
+            border-radius: 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+        .select-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 28px;
+            margin-bottom: 24px;
+        }
+        #citySelect {
+            font-size: 28px;
+            padding: 8px 16px;
+            border: 2px solid #ffc88a;
+            border-radius: 12px;
+        }
+        .card-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            opacity: 1;
+            transition: opacity 0.35s ease;
+        }
+        .card-container.fade-out {
+            opacity: 0;
+        }
+        .item-card {
+            border: 1px solid #ffd6a5;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        .item-card img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+        }
+        .card-text {
+            padding: 24px;
+        }
+        .card-text h3 {
+            font-size: 36px;
+            color: #c83c23;
+            margin-bottom: 16px;
+            min-height: 48px;
+        }
+        .card-text p {
+            font-size: 20px;
+            color: #555;
+            line-height: 1.6;
+        }
+        .confetti {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .fact-modal {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 32px;
+            border-radius: 20px;
+            max-width: 420px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.18);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.35s ease;
+        }
+        .fact-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .fact-modal h4 {
+            margin-bottom: 12px;
+            color: #c83c23;
+            font-size: 24px;
+        }
+        .fact-modal p {
+            font-size: 19px;
+            color: #444;
+            line-height: 1.6;
+        }
+        .fact-modal button {
+            margin-top: 20px;
+            padding: 8px 18px;
+            border: none;
+            border-radius: 999px;
+            background: #ff9b54;
+            color: white;
+            cursor: pointer;
+        }
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.25);
+            z-index: 199;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.35s ease;
+        }
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width:768px){
+            .splash h1 {
+                font-size: 38px;
+            }
+            .select-row {
+                flex-direction: column;
+                font-size: 22px;
+            }
+            #citySelect {
+                font-size: 22px;
+            }
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+            .card-text h3 {
+                font-size: 26px;
+            }
+            .card-text p {
+                font-size: 18px;
+            }
+            .fact-modal {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor-light" id="cursorLight"></div>
+
+    <!-- Welcome splash -->
+    <div class="splash" id="splash">
+        <h1>Food & Travel Check-in</h1>
+        <p>Discover beautiful cities and taste amazing local food</p>
+        <div class="splash-progress"><div id="progressBar"></div></div>
+        <button id="startBtn">Start Exploring</button>
+    </div>
+
+    <!-- Main -->
+    <div class="main-page">
+        <h1>Food & Travel Check-in</h1>
+        <div class="subtitle">Pick a city, enjoy the scenery and taste local delicacies</div>
+        <div class="control-bar">
+            <div class="select-row">
+                <span>Destination: </span>
+                <select id="citySelect">
+                    <option value="hangzhou">Hangzhou</option>
+                    <option value="chengdu">Chengdu</option>
+                    <option value="xian">Xi'an</option>
+                    <option value="chongqing">Chongqing</option>
+                    <option value="xiamen">Xiamen</option>
+                    <option value="suzhou">Suzhou</option>
+                </select>
+            </div>
+            <span class="city-badge" id="cityBadge">Hangzhou</span>
+            <button id="randomBtn">🎲 Random City</button>
+        </div>
+        <div class="wrap">
+            <div class="card-container" id="cardBox">
+                <div class="item-card" id="sightCard">
+                    <img id="sightImg" src="images/westlake.jfif" alt="sight">
+                    <div class="card-text">
+                        <h3 id="sightTitle"></h3>
+                        <p id="sightDesc"></p>
+                    </div>
+                </div>
+                <div class="item-card" id="foodCard">
+                    <img id="foodImg" src="images/dongporou.jfif" alt="food">
+                    <div class="card-text">
+                        <h3 id="foodTitle"></h3>
+                        <p id="foodDesc"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fact popup -->
+    <div class="overlay" id="overlay"></div>
+    <div class="fact-modal" id="factModal">
+        <h4 id="factTitle"></h4>
+        <p id="factText"></p>
+        <button id="closeFact">Got it!</button>
+    </div>
+
+    <script>
+        const data = {
+            hangzhou: {
+                sight: {
+                    img: "images/westlake.jfif",
+                    title: "West Lake",
+                    desc: "West Lake in Hangzhou, with shimmering water and misty scenery, is a landmark landscape in the Jiangnan region."
+                },
+                food: {
+                    img: "images/dongporou.jfif",
+                    title: "Dongpo Pork",
+                    desc: "Glossy red, tender and fatty but not greasy, it is a classic dish of Hangzhou."
+                },
+                theme: "#fff8ec",
+                fact: "West Lake inspired countless ancient Chinese poets; many famous paintings depict its sunrise and mist."
+            },
+            chengdu: {
+                sight: {
+                    img: "images/panda.jfif",
+                    title: "Giant Panda Base",
+                    desc: "Get close to lovely giant pandas. It is a must-visit spot in Chengdu."
+                },
+                food: {
+                    img: "images/chengdupot.jfif",
+                    title: "Chengdu Hot Pot",
+                    desc: "Spicy, fragrant and steaming hot, the most famous local food in Chengdu."
+                },
+                theme: "#fff6e8",
+                fact: "Chengdu is one of the oldest continuously inhabited cities in China, famous for its slow, relaxing lifestyle."
+            },
+            xian: {
+                sight: {
+                    img: "images/bingmayong.jfif",
+                    title: "Terracotta Army",
+                    desc: "A world wonder. Thousands of warriors witness the glory of ancient Qin Dynasty."
+                },
+                food: {
+                    img: "images/roujiamo.jfif",
+                    title: "Roujiamo",
+                    desc: "Crispy crust with juicy meat filling, the signature snack of Xi'an."
+                },
+                theme: "#fff3e4",
+                fact: "Xi'an was the start of the Silk Road and served as capital for more than ten dynasties."
+            },
+            chongqing: {
+                sight: {
+                    img: "images/chongqing.jfif",
+                    title: "Hongyadong",
+                    desc: "Built along steep cliffs, this layered stilt-house complex glows beautifully at night."
+                },
+                food: {
+                    img: "images/chongqingpot.jfif",
+                    title: "Chongqing Hotpot",
+                    desc: "Fiery and rich broth loaded with chili and Sichuan peppercorns, the soul of Chongqing."
+                },
+                theme: "#ffefdf",
+                fact: "Chongqing is known as the 'Mountain City'; buildings stack vertically across steep hills."
+            },
+            xiamen: {
+                sight: {
+                    img: "images/xiamen.jfif",
+                    title: "Gulangyu Island",
+                    desc: "A quiet car-free island with old colonial villas, beaches and gentle sea wind."
+                },
+                food: {
+                    img: "images/shaxian.jfif",
+                    title: "Shaxian Noodles",
+                    desc: "Light, fresh and comforting local noodle dish loved by residents in Fujian."
+                },
+                theme: "#f8fff9",
+                fact: "Gulangyu has no cars or bikes; you walk everywhere and hear piano music from old villas."
+            },
+            suzhou: {
+                sight: {
+                    img: "images/suzhou.jfif",
+                    title: "Classical Suzhou Garden",
+                    desc: "Masterpiece of Chinese landscape design, blending rocks, water, pavilions and plants."
+                },
+                food: {
+                    img: "images/suzhoucake.jfif",
+                    title: "Suzhou Pastry",
+                    desc: "Soft, sweet and delicate traditional pastry representing Suzhou’s gentle taste."
+                },
+                theme: "#f6fff9",
+                fact: "Suzhou gardens are designed to feel like a whole miniature world inside a small walled space."
+            }
+        };
+        const cityNames = Object.keys(data);
+
+        // Audio ping
+        function playPing() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.value = 720;
+            osc.type = "sine";
+            gain.gain.setValueAtTime(0.22, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.22);
+        }
+
+        // Mouse glow
+        const cursorLight = document.getElementById("cursorLight");
+        document.addEventListener("mousemove", e => {
+            cursorLight.style.left = e.clientX + "px";
+            cursorLight.style.top = e.clientY + "px";
+        });
+
+        // Splash auto countdown
+        const splash = document.getElementById("splash");
+        const startBtn = document.getElementById("startBtn");
+        const progressBar = document.getElementById("progressBar");
+        let splashTimer = 0;
+        const splashTotal = 5000;
+        const splashStep = 50;
+        const splashInt = setInterval(() => {
+            splashTimer += splashStep;
+            const pct = Math.min(100, splashTimer / splashTotal * 100);
+            progressBar.style.width = pct + "%";
+            if (splashTimer >= splashTotal) {
+                clearInterval(splashInt);
+                splash.classList.add("hidden");
+            }
+        }, splashStep);
+        startBtn.onclick = () => {
+            clearInterval(splashInt);
+            splash.classList.add("hidden");
+        };
+
+        // Bubble spawn
+        function spawnBubble() {
+            const b = document.createElement("div");
+            b.className = "bubble";
+            const size = 20 + Math.random() * 60;
+            b.style.width = size + "px";
+            b.style.height = size + "px";
+            b.style.left = Math.random() * window.innerWidth + "px";
+            b.style.animationDuration = (6 + Math.random() * 7) + "s";
+            document.body.appendChild(b);
+            setTimeout(() => b.remove(), 14000);
+        }
+        setInterval(spawnBubble, 1200);
+
+        // Tilt effect for cards
+        function attachTilt(card) {
+            card.onmousemove = e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const rx = ((y / rect.height) - 0.5) * -10;
+                const ry = ((x / rect.width) - 0.5) * 10;
+                card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+            };
+            card.onmouseleave = () => {
+                card.style.transform = "rotateX(0deg) rotateY(0deg)";
+            };
+        }
+
+        // Typing effect
+        function typeText(el, text, speed = 50) {
+            el.innerText = "";
+            let i = 0;
+            const t = setInterval(() => {
+                if (i >= text.length) {
+                    clearInterval(t);
+                    return;
+                }
+                el.innerText += text[i++];
+            }, speed);
+        }
+
+        // Confetti
+        function popConfetti() {
+            for (let i = 0; i < 36; i++) {
+                const piece = document.createElement("div");
+                piece.className = "confetti";
+                piece.style.left = Math.random() * window.innerWidth + "px";
+                piece.style.top = "-10px";
+                piece.style.width = "10px";
+                piece.style.height = "10px";
+                piece.style.borderRadius = "50%";
+                piece.style.background = ["#ff9b54", "#c83c23", "#ffd6a5", "#ffe8cc"][Math.floor(Math.random() * 4)];
+                document.body.appendChild(piece);
+                let y = -10;
+                let vy = 2 + Math.random() * 3;
+                let vx = (Math.random() - 0.5) * 4;
+                const fall = setInterval(() => {
+                    y += vy;
+                    piece.style.top = y + "px";
+                    piece.style.left = parseFloat(piece.style.left) + vx + "px";
+                    if (y > window.innerHeight) {
+                        clearInterval(fall);
+                        piece.remove();
+                    }
+                }, 25);
+            }
+        }
+
+        // Fact modal
+        const overlay = document.getElementById("overlay");
+        const factModal = document.getElementById("factModal");
+        const factTitle = document.getElementById("factTitle");
+        const factText = document.getElementById("factText");
+        const closeFact = document.getElementById("closeFact");
+        function openFact(title, txt) {
+            factTitle.innerText = title;
+            factText.innerText = txt;
+            overlay.classList.add("show");
+            factModal.classList.add("show");
+        }
+        function closeFactBox() {
+            overlay.classList.remove("show");
+            factModal.classList.remove("show");
+        }
+        closeFact.onclick = closeFactBox;
+        overlay.onclick = closeFactBox;
+
+        // Elements
+        const citySelect = document.getElementById("citySelect");
+        const sightImg = document.getElementById("sightImg");
+        const sightTitle = document.getElementById("sightTitle");
+        const sightDesc = document.getElementById("sightDesc");
+        const foodImg = document.getElementById("foodImg");
+        const foodTitle = document.getElementById("foodTitle");
+        const foodDesc = document.getElementById("foodDesc");
+        const cardBox = document.getElementById("cardBox");
+        const cityBadge = document.getElementById("cityBadge");
+        const randomBtn = document.getElementById("randomBtn");
+        const sightCard = document.getElementById("sightCard");
+        const foodCard = document.getElementById("foodCard");
+        attachTilt(sightCard);
+        attachTilt(foodCard);
+        sightCard.onclick = () => openFact(cityBadge.innerText, data[citySelect.value].fact);
+        foodCard.onclick = () => openFact(cityBadge.innerText, data[citySelect.value].fact);
+
+        sightImg.onerror = () => sightImg.src = "images/westlake.jfif";
+        foodImg.onerror = () => foodImg.src = "images/westlake.jfif";
+
+        function render(cityKey) {
+            cardBox.classList.add("fade-out");
+            setTimeout(() => {
+                const city = data[cityKey];
+                sightImg.src = city.sight.img;
+                foodImg.src = city.food.img;
+                sightDesc.innerText = city.sight.desc;
+                foodDesc.innerText = city.food.desc;
+                cityBadge.innerText = cityKey.charAt(0).toUpperCase() + cityKey.slice(1);
+                document.body.style.backgroundColor = city.theme;
+                typeText(sightTitle, city.sight.title, 45);
+                typeText(foodTitle, city.food.title, 45);
+                cardBox.classList.remove("fade-out");
+                popConfetti();
+            }, 320);
+        }
+
+        citySelect.addEventListener("change", () => {
+            render(citySelect.value);
+            playPing();
+        });
+        randomBtn.addEventListener("click", () => {
+            const pick = cityNames[Math.floor(Math.random() * cityNames.length)];
+            citySelect.value = pick;
+            render(pick);
+            playPing();
+        });
+
+        render("hangzhou");
+    </script>
+</body>
+</html>
